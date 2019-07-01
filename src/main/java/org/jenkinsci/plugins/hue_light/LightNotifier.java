@@ -40,9 +40,18 @@ public class LightNotifier extends Notifier {
     private final String unstableBuild;
     private final String badBuild;
     private LightController lightController;
+    private final String bridgeIp;
+    private final String bridgeUsername;
 
     @DataBoundConstructor
-    public LightNotifier(String lightId, String preBuild, String goodBuild, String unstableBuild, String badBuild) {
+    public LightNotifier(
+            String lightId, 
+            String preBuild, 
+            String goodBuild, 
+            String unstableBuild, 
+            String badBuild, 
+            String bridgeIp, 
+            String bridgeUsername) {
     	this.lightId = new HashSet<String>();
     	if(lightId != null) {
     		String[] lightIds = lightId.split(",");
@@ -55,18 +64,28 @@ public class LightNotifier extends Notifier {
         this.goodBuild = goodBuild;
         this.unstableBuild = unstableBuild;
         this.badBuild = badBuild;
+        this.bridgeIp = bridgeIp;
+        this.bridgeUsername = bridgeUsername;
     }
 	
-	public String getLightId() {
-		String lid = "";
-		if(this.lightId != null && this.lightId.size() > 0) {
-    		for(String id : this.lightId) {
-    			lid += id + ",";
-    		}
-			lid = lid.substring(0, lid.length() - 1);
-    	}
-		return lid;
-	}
+    public String getBridgeIp(){
+        return this.bridgeIp;
+    }
+    
+    public String getBridgeUsername(){
+        return this.bridgeUsername;
+    }
+    
+    public String getLightId() {
+        String lid = "";
+        if(this.lightId != null && this.lightId.size() > 0) {
+            for(String id : this.lightId) {
+                lid += id + ",";
+            }
+            lid = lid.substring(0, lid.length() - 1);
+        }
+        return lid;
+    }
 
     public String getPreBuild() {
         return this.preBuild;
@@ -92,7 +111,7 @@ public class LightNotifier extends Notifier {
         // does not work in constructor...
         final DescriptorImpl descriptor = this.getDescriptor();
 
-        this.lightController = new LightController(descriptor, listener.getLogger());
+        this.lightController = new LightController(descriptor, listener.getLogger(), this.bridgeIp, this.bridgeUsername);
         
         for(String id : this.lightId) {
 	        Light light = this.lightController.getLightForId(id);

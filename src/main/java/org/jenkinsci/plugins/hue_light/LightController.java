@@ -20,13 +20,18 @@ public class LightController {
      * @param descriptor The descriptor for this application
      * @param logger     logger stream
      */
-    public LightController(LightNotifier.DescriptorImpl descriptor, PrintStream logger) {
+    public LightController(
+            LightNotifier.DescriptorImpl descriptor, 
+            PrintStream logger, 
+            String bridgeIp,
+            String bridgeUsername
+    ){
         this.logger = logger;
         this.saturation = Integer.parseInt(descriptor.getSaturation());
         this.brightness = Integer.parseInt(descriptor.getBrightness());
 
         try {
-            this.hueBridge = new HueBridge(descriptor.getBridgeIp(), descriptor.getBridgeUsername());
+            this.hueBridge = new HueBridge(bridgeIp, bridgeUsername); 
         } catch (Exception e) {
             this.logError(e.getMessage());
         }

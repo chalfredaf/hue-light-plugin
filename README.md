@@ -21,6 +21,15 @@ The following states are implemented:
   * Set the id of the light you want to control
 
 
+## ÅF fork
+
+Implementing support for multiple bridges. Global settings of bridge IP and 
+user are now defaults. Each individual job has settings for bridge IP and user
+in post-build action.
+
+Implementing support for pipeline scripts. Format is presented in the Snippet 
+Generator. 
+
 ## License
 
 This plugin has been released under the MIT License. It uses

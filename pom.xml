@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>1.509.2</version>
+        <version>3.46</version>
         <!-- which version of Jenkins is this plugin built against? -->
     </parent>
 
@@ -11,6 +11,15 @@
     <artifactId>hue-light</artifactId>
     <version>1.2.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
+    <properties>
+        <jenkins.version>2.164.1</jenkins.version>
+        <java.level>8</java.level>
+        <!--
+          explicitly specifying the latest version here because one we get from the parent POM
+          tends to lag behind a bit
+        -->
+        <maven-hpi-plugin.version>1.96</maven-hpi-plugin.version>
+    </properties>
     <name>hue-light</name>
     <url>https://wiki.jenkins-ci.org/display/JENKINS/hue-light+Plugin</url>
 
@@ -66,14 +75,6 @@
         </repository>
     </distributionManagement>
 
-    <properties>
-        <!--
-          explicitly specifying the latest version here because one we get from the parent POM
-          tends to lag behind a bit
-        -->
-        <maven-hpi-plugin.version>1.96</maven-hpi-plugin.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>nl.q42.jue</groupId>
@@ -84,7 +85,7 @@
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>structs</artifactId>
-            <version>1.1</version>
+            <version>1.5</version>
         </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -100,7 +101,7 @@
         <dependency>
             <groupId>org.jenkins-ci.main</groupId>
             <artifactId>jenkins-core</artifactId>
-            <version>2.150.1</version>
+            <version>2.164.1</version>
         </dependency>
     </dependencies>
 </project>

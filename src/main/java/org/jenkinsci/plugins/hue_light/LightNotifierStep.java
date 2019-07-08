@@ -53,7 +53,6 @@ public class LightNotifierStep extends Step {
     private final HashSet<String> lightId;
     private boolean isPreBuild = false;
     
-    /* preBuild is not yet used */
     @Nonnull
     private String preBuild = DescriptorImpl.defaultPreBuild;
     @Nonnull
@@ -140,7 +139,6 @@ public class LightNotifierStep extends Step {
 
     private static class LightNotifierStepExecution extends SynchronousStepExecution<Void> {
         
-        //@SuppressFBWarnings(value="SE_TRANSIENT_FIELD_NOT_RESTORED", justification="Only used when starting.")
         private transient final String bridgeUsername;
         private transient final String bridgeIp;
         private transient final HashSet<String> lightId;
@@ -245,8 +243,7 @@ public class LightNotifierStep extends Step {
         public static final String defaultGoodBuild = "green";
         public static final String defaultUnstableBuild = "yellow";
         public static final String defaultBadBuild = "red";
-        
-        
+                
         public static boolean isInteger(String s) {
             try {
                 Integer.parseInt(s);

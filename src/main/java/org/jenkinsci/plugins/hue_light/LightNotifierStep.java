@@ -51,6 +51,7 @@ public class LightNotifierStep extends Step {
     public final String bridgeUsername;
     public final String bridgeIp;
     private final HashSet<String> lightId;
+    private boolean isPreBuild = false;
     
     /* preBuild is not yet used */
     @Nonnull
@@ -62,6 +63,13 @@ public class LightNotifierStep extends Step {
     @Nonnull
     private String badBuild = DescriptorImpl.defaultBadBuild;
     
+    public boolean getIsPreBuild(){
+        return this.isPreBuild;
+    }
+    @DataBoundSetter
+    public void setIsPreBuild(boolean isPreBuild){
+        this.isPreBuild = isPreBuild;
+    }
     
     @Nonnull
     public String getPreBuild() {return preBuild;}
@@ -126,7 +134,7 @@ public class LightNotifierStep extends Step {
     
     @Override
     public StepExecution start(StepContext context) throws Exception {
-        return new LightNotifierStepExecution(this.bridgeUsername, this.bridgeIp, this.lightId,this.goodBuild, this.badBuild, this.unstableBuild, context);
+        return new LightNotifierStepExecution(this.bridgeUsername, this.bridgeIp, this.lightId,this.goodBuild, this.badBuild, this.unstableBuild, this.preBuild, this.isPreBuild, context);
     }
 
 
@@ -139,6 +147,8 @@ public class LightNotifierStep extends Step {
         private transient final String goodBuild;
         private transient final String badBuild;
         private transient final String unstableBuild;
+        private transient final String preBuild;
+        private transient final boolean isPreBuild;
         private final LightController lightController;
         private final LightNotifier.DescriptorImpl notifierDescriptor;
         
@@ -150,6 +160,8 @@ public class LightNotifierStep extends Step {
                 String good,
                 String bad,
                 String ugly,
+                String preBuild,
+                boolean isPreBuild,
                 StepContext context) throws Exception {
         super(context);
         this.bridgeUsername = bridgeUsername;
@@ -158,6 +170,9 @@ public class LightNotifierStep extends Step {
         this.goodBuild = good;
         this.badBuild = bad;
         this.unstableBuild = ugly;
+        this.preBuild = preBuild;
+        
+        this.isPreBuild = isPreBuild;
         this.notifierDescriptor = new LightNotifier.DescriptorImpl();
         
         PrintStream logger = getContext().get(TaskListener.class).getLogger();
@@ -166,12 +181,22 @@ public class LightNotifierStep extends Step {
         
         @Override
         protected Void run() throws Exception {
-            setColor();
+            if(!isPreBuild){
+                setResult();
+            } else {
+                setPreBuild();
+            }
             return null;
         }
         
+        private void setPreBuild() throws Exception {
+            for (String id : this.lightId){
+                Light light =  this.lightController.getLightForId(id);
+                this.lightController.setPulseBreathe(light, "Build Starting", ConfigColorToHue(this.preBuild));
+            }
+        }
         
-        private void setColor() throws Exception {
+        private void setResult() throws Exception {
             BallColor ballcolor = getContext().get(Run.class).getResult().color;
         
             for(String id : this.lightId) {

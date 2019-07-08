@@ -40,6 +40,7 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.jenkinsci.plugins.workflow.steps.SynchronousStepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.StaplerRequest;
 
 /**
@@ -64,12 +65,31 @@ public class LightNotifierStep extends Step {
     
     @Nonnull
     public String getPreBuild() {return preBuild;}
+    @DataBoundSetter
+    public void setPreBuild(String preBuild){
+        this.preBuild = preBuild;
+    }
+    
     @Nonnull
     public String getGoodBuild() {return goodBuild;}
+    @DataBoundSetter
+    public void setGoodBuild(String goodBuild){
+        this.goodBuild = goodBuild;
+    }
+    
     @Nonnull
     public String getUnstableBuild() {return unstableBuild;}
+    @DataBoundSetter
+    public void setUnstableBuild(String unstableBuild){
+        this.unstableBuild = unstableBuild;
+    }
+    
     @Nonnull
     public String getBadBuild() {return badBuild;}
+    @DataBoundSetter
+    public void setBadBuild(String badBuild){
+        this.badBuild = badBuild;
+    }
     
     public String getBridgeUsername(){return this.bridgeUsername;}
     public String getBridgeIp() {return this.bridgeIp;}
@@ -90,10 +110,7 @@ public class LightNotifierStep extends Step {
     public LightNotifierStep(
             String bridgeUsername, 
             String bridgeIp, 
-            String lightId, 
-            String goodBuild, 
-            String badBuild, 
-            String unstableBuild){
+            String lightId){
         this.bridgeUsername = bridgeUsername;
         this.bridgeIp = bridgeIp;
         this.lightId = new HashSet<>();
@@ -104,9 +121,6 @@ public class LightNotifierStep extends Step {
     			this.lightId.add(id.trim());
     		}
     	}
-        this.goodBuild = goodBuild;
-        this.badBuild = badBuild;
-        this.unstableBuild = unstableBuild;
     }   
     
     

@@ -96,7 +96,7 @@ public class LightNotifierStep extends Step {
             String unstableBuild){
         this.bridgeUsername = bridgeUsername;
         this.bridgeIp = bridgeIp;
-        this.lightId = new HashSet<String>();
+        this.lightId = new HashSet<>();
     	
         if(lightId != null) {
     		String[] lightIds = lightId.split(",");
@@ -235,6 +235,6 @@ public class LightNotifierStep extends Step {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
             return super.configure(req, json); 
-        }       
+        }
     }
 }

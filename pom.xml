@@ -9,7 +9,7 @@
 
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>hue-light-af-fork</artifactId>
-    <version>0.1.1</version>
+    <version>1.1</version>
     <packaging>hpi</packaging>
     <properties>
         <jenkins.version>2.164.1</jenkins.version>

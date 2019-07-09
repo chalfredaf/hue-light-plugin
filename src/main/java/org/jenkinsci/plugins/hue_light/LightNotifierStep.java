@@ -183,7 +183,7 @@ public class LightNotifierStep extends Step {
         @Override
         protected Void run() throws Exception {
             if(!isPreBuild){
-                setResult();
+                setResultColor();
             } else {
                 setPreBuild();
             }
@@ -197,7 +197,7 @@ public class LightNotifierStep extends Step {
             }
         }
         
-        private void setResult() throws Exception {
+        private void setResultColor() throws Exception {
             BallColor ballcolor = getContext().get(Run.class).getResult().color;
         
             for(String id : this.lightId) {
@@ -278,9 +278,10 @@ public class LightNotifierStep extends Step {
         
         private ListBoxModel defaultList(){
             ListBoxModel items = new ListBoxModel();
-            for (String res: Arrays.asList(defaultPreBuild, defaultGoodBuild, defaultUnstableBuild, defaultBadBuild)){
-                items.add(res);
-            }
+            Arrays.asList(defaultPreBuild, defaultGoodBuild, defaultUnstableBuild, defaultBadBuild)
+                    .forEach((res) -> { 
+                        items.add(res);
+                    });
             return items;
         }
         

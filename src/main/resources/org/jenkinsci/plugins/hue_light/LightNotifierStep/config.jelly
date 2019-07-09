@@ -12,15 +12,15 @@
     <f:textbox />
   </f:entry>
   <f:entry title="Color for Pre-Build Trigger" field="preBuild">
-    <f:textbox default="${descriptor.defaultPreBuild}" />
+    <f:select value="${descriptor.defaultPreBuild}" />
   </f:entry>
   <f:entry title="Color for Good Build" field="goodBuild">
-    <f:textbox default="${descriptor.defaultGoodBuild}" />
+    <f:select value="${descriptor.defaultGoodBuild}" />
   </f:entry>
   <f:entry title="Color for Unstable Build" field="unstableBuild">
-    <f:textbox default="${descriptor.defaultUnstableBuild}" />
+    <f:select value="${descriptor.defaultUnstableBuild}" />
   </f:entry>
   <f:entry title="Color for Bad Build" field="badBuild">
-    <f:textbox default="${descriptor.defaultBadBuild}" />
+    <f:select value="${descriptor.defaultBadBuild}" />
   </f:entry>
 </j:jelly>

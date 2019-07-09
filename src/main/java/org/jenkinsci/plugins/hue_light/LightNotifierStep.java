@@ -27,9 +27,12 @@ import hudson.Extension;
 import hudson.model.BallColor;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.ListBoxModel;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
@@ -243,7 +246,7 @@ public class LightNotifierStep extends Step {
         public static final String defaultGoodBuild = "green";
         public static final String defaultUnstableBuild = "yellow";
         public static final String defaultBadBuild = "red";
-                
+        
         public static boolean isInteger(String s) {
             try {
                 Integer.parseInt(s);
@@ -271,6 +274,31 @@ public class LightNotifierStep extends Step {
         @Override
         public boolean configure(StaplerRequest req, JSONObject json) throws FormException {
             return super.configure(req, json); 
+        }
+        
+        private ListBoxModel defaultList(){
+            ListBoxModel items = new ListBoxModel();
+            for (String res: Arrays.asList(defaultPreBuild, defaultGoodBuild, defaultUnstableBuild, defaultBadBuild)){
+                items.add(res);
+            }
+            return items;
+        }
+        
+        public ListBoxModel doFillPreBuildItems() {
+            
+            return defaultList();
+        }
+        
+        public ListBoxModel doFillGoodBuildItems() {
+            return defaultList();
+        }
+        
+        public ListBoxModel doFillUnstableBuildItems(){
+            return defaultList();
+        }
+        
+        public ListBoxModel doFillBadBuildItems(){
+            return defaultList();
         }
     }
 }

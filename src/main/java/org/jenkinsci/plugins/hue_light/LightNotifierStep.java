@@ -32,7 +32,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import net.sf.json.JSONObject;
@@ -142,6 +141,8 @@ public class LightNotifierStep extends Step {
 
     private static class LightNotifierStepExecution extends SynchronousStepExecution<Void> {
         
+        private static final long serialVersionUID = 1L;
+                
         private transient final String bridgeUsername;
         private transient final String bridgeIp;
         private transient final HashSet<String> lightId;
@@ -152,6 +153,7 @@ public class LightNotifierStep extends Step {
         private transient final boolean isPreBuild;
         private final LightController lightController;
         private final LightNotifier.DescriptorImpl notifierDescriptor;
+        private final PrintStream logger;
         
 
         LightNotifierStepExecution(
@@ -160,7 +162,7 @@ public class LightNotifierStep extends Step {
                 HashSet<String> lightId, 
                 String good,
                 String bad,
-                String ugly,
+                String unstable,
                 String preBuild,
                 boolean isPreBuild,
                 StepContext context) throws Exception {
@@ -170,14 +172,15 @@ public class LightNotifierStep extends Step {
         this.lightId = lightId;
         this.goodBuild = good;
         this.badBuild = bad;
-        this.unstableBuild = ugly;
+        this.unstableBuild = unstable;
         this.preBuild = preBuild;
         
         this.isPreBuild = isPreBuild;
         this.notifierDescriptor = new LightNotifier.DescriptorImpl();
         
-        PrintStream logger = getContext().get(TaskListener.class).getLogger();
-        this.lightController = new LightController(notifierDescriptor, logger,this.bridgeIp, this.bridgeUsername);
+        
+        this.logger = getContext().get(TaskListener.class).getLogger();
+        this.lightController = new LightController(notifierDescriptor, this.logger,this.bridgeIp, this.bridgeUsername);
         }
         
         @Override
@@ -199,7 +202,7 @@ public class LightNotifierStep extends Step {
         
         private void setResultColor() throws Exception {
             BallColor ballcolor = getContext().get(Run.class).getResult().color;
-        
+            
             for(String id : this.lightId) {
 	        Light light = this.lightController.getLightForId(id);
 	

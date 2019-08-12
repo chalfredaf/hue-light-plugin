@@ -2,6 +2,9 @@
   <f:entry field="isPreBuild">
     <f:checkbox default="false" title="Prebuild indication" />
   </f:entry>
+  <f:entry field="res">
+    <f:checkbox default="noRes" title="Build Result" />
+  </f:entry>
   <f:entry title="IP of the bridge" field="bridgeIp">
     <f:textbox />
     </f:entry>

@@ -54,6 +54,7 @@ public class LightNotifierStep extends Step {
     public final String bridgeIp;
     private final HashSet<String> lightId;
     private boolean isPreBuild = false;
+    private String res = "noRes";
     
     @Nonnull
     private String preBuild = DescriptorImpl.defaultPreBuild;
@@ -63,6 +64,14 @@ public class LightNotifierStep extends Step {
     private String unstableBuild = DescriptorImpl.defaultUnstableBuild;
     @Nonnull
     private String badBuild = DescriptorImpl.defaultBadBuild;
+    
+    public String getRes(){
+        return this.res;
+    }
+    @DataBoundSetter
+    public void setRes(String res){
+        this.res = res;
+    }
     
     public boolean getIsPreBuild(){
         return this.isPreBuild;
@@ -123,7 +132,7 @@ public class LightNotifierStep extends Step {
         this.bridgeUsername = bridgeUsername;
         this.bridgeIp = bridgeIp;
         this.lightId = new HashSet<>();
-    	
+
         if(lightId != null) {
     		String[] lightIds = lightId.split(",");
     		for(String id : lightIds) {
@@ -135,7 +144,17 @@ public class LightNotifierStep extends Step {
     
     @Override
     public StepExecution start(StepContext context) throws Exception {
-        return new LightNotifierStepExecution(this.bridgeUsername, this.bridgeIp, this.lightId,this.goodBuild, this.badBuild, this.unstableBuild, this.preBuild, this.isPreBuild, context);
+        return new LightNotifierStepExecution(
+                this.bridgeUsername, 
+                this.bridgeIp, 
+                this.lightId,
+                this.goodBuild, 
+                this.badBuild, 
+                this.unstableBuild, 
+                this.preBuild, 
+                this.isPreBuild, 
+                this.res,
+                context);
     }
 
 
@@ -154,6 +173,7 @@ public class LightNotifierStep extends Step {
         private final LightController lightController;
         private final LightNotifier.DescriptorImpl notifierDescriptor;
         private final PrintStream logger;
+        private transient final String res;
         
 
         LightNotifierStepExecution(
@@ -165,6 +185,7 @@ public class LightNotifierStep extends Step {
                 String unstable,
                 String preBuild,
                 boolean isPreBuild,
+                String res,
                 StepContext context) throws Exception {
         super(context);
         this.bridgeUsername = bridgeUsername;
@@ -174,19 +195,18 @@ public class LightNotifierStep extends Step {
         this.badBuild = bad;
         this.unstableBuild = unstable;
         this.preBuild = preBuild;
-        
         this.isPreBuild = isPreBuild;
         this.notifierDescriptor = new LightNotifier.DescriptorImpl();
-        
-        
         this.logger = getContext().get(TaskListener.class).getLogger();
         this.lightController = new LightController(notifierDescriptor, this.logger,this.bridgeIp, this.bridgeUsername);
+        this.res = res;
         }
         
         @Override
         protected Void run() throws Exception {
             if(!isPreBuild){
-                setResultColor();
+                setResultFromParam();
+                //setResultColor();
             } else {
                 setPreBuild();
             }
@@ -220,7 +240,29 @@ public class LightNotifierStep extends Step {
             }
         }
         
-       private Integer ConfigColorToHue(String color) {
+        private void setResultFromParam(){
+            logger.println("Input Param: " + res);
+            if (res != "noRes"){
+                
+                for(String id : this.lightId) {
+                    Light light = this.lightController.getLightForId(id);
+                    
+                    switch(res) {
+                        case "FAILURE":
+                            this.lightController.setColor(light, "Bad Build", ConfigColorToHue(badBuild));
+                            break;
+                        case "UNSTABLE":
+                            this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(unstableBuild));
+                            break;
+                        case "SUCCESS":
+                            this.lightController.setColor(light, "Good Build", ConfigColorToHue(goodBuild));
+                            break;
+                    }
+                }
+            }
+        }
+        
+        private Integer ConfigColorToHue(String color) {
 
             if (color.equalsIgnoreCase("blue")) {
                 return Integer.parseInt(notifierDescriptor.getBlue());

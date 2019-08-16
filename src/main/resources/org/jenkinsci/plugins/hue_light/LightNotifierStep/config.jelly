@@ -1,28 +1,36 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:entry field="isPreBuild">
-    <f:checkbox default="false" title="Prebuild indication" />
+  <f:entry title="Select Notification type" field="notifierType">
+    <f:select />
   </f:entry>
-  <f:entry field="res">
-    <f:checkbox default="noRes" title="Build Result" />
+  
+  <f:entry title="Capture result" field="result">
+      <f:readOnlyTextbox value="${descriptor.currentResult}"/>
   </f:entry>
+      
   <f:entry title="IP of the bridge" field="bridgeIp">
     <f:textbox />
-    </f:entry>
+  </f:entry>
+  
   <f:entry title="Username" field="bridgeUsername">
     <f:textbox />
   </f:entry>
+  
   <f:entry title="ID of a light" field="lightId">
     <f:textbox />
   </f:entry>
+  
   <f:entry title="Color for Pre-Build Trigger" field="preBuild">
     <f:select value="${descriptor.defaultPreBuild}" />
   </f:entry>
+  
   <f:entry title="Color for Good Build" field="goodBuild">
     <f:select value="${descriptor.defaultGoodBuild}" />
   </f:entry>
+  
   <f:entry title="Color for Unstable Build" field="unstableBuild">
     <f:select value="${descriptor.defaultUnstableBuild}" />
   </f:entry>
+  
   <f:entry title="Color for Bad Build" field="badBuild">
     <f:select value="${descriptor.defaultBadBuild}" />
   </f:entry>

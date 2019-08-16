@@ -53,9 +53,11 @@ public class LightNotifierStep extends Step {
     public final String bridgeUsername;
     public final String bridgeIp;
     private final HashSet<String> lightId;
-    private boolean isPreBuild = false;
-    private String res = "noRes";
     
+    @Nonnull
+    private String result = DescriptorImpl.currentResult;
+    @Nonnull
+    private String notifierType = DescriptorImpl.notifierResult;
     @Nonnull
     private String preBuild = DescriptorImpl.defaultPreBuild;
     @Nonnull
@@ -64,21 +66,17 @@ public class LightNotifierStep extends Step {
     private String unstableBuild = DescriptorImpl.defaultUnstableBuild;
     @Nonnull
     private String badBuild = DescriptorImpl.defaultBadBuild;
-    
-    public String getRes(){
-        return this.res;
-    }
+   
+    public String getNotifierType(){return notifierType;}
     @DataBoundSetter
-    public void setRes(String res){
-        this.res = res;
+    public void setNotifierType(String notifierType){
+        this.notifierType = notifierType;
     }
     
-    public boolean getIsPreBuild(){
-        return this.isPreBuild;
-    }
+    public String getResult(){return this.result;}
     @DataBoundSetter
-    public void setIsPreBuild(boolean isPreBuild){
-        this.isPreBuild = isPreBuild;
+    public void setResult(String r){
+        this.result = r;
     }
     
     @Nonnull
@@ -152,8 +150,8 @@ public class LightNotifierStep extends Step {
                 this.badBuild, 
                 this.unstableBuild, 
                 this.preBuild, 
-                this.isPreBuild, 
-                this.res,
+                this.notifierType,
+                this.result,
                 context);
     }
 
@@ -169,12 +167,11 @@ public class LightNotifierStep extends Step {
         private transient final String badBuild;
         private transient final String unstableBuild;
         private transient final String preBuild;
-        private transient final boolean isPreBuild;
+        private transient final String result;
+        private transient final String notifierType;
         private final LightController lightController;
         private final LightNotifier.DescriptorImpl notifierDescriptor;
-        private final PrintStream logger;
-        private transient final String res;
-        
+        private final PrintStream logger;        
 
         LightNotifierStepExecution(
                 String bridgeUsername, 
@@ -184,8 +181,8 @@ public class LightNotifierStep extends Step {
                 String bad,
                 String unstable,
                 String preBuild,
-                boolean isPreBuild,
-                String res,
+                String notifierType,
+                String result,
                 StepContext context) throws Exception {
         super(context);
         this.bridgeUsername = bridgeUsername;
@@ -195,20 +192,22 @@ public class LightNotifierStep extends Step {
         this.badBuild = bad;
         this.unstableBuild = unstable;
         this.preBuild = preBuild;
-        this.isPreBuild = isPreBuild;
         this.notifierDescriptor = new LightNotifier.DescriptorImpl();
         this.logger = getContext().get(TaskListener.class).getLogger();
         this.lightController = new LightController(notifierDescriptor, this.logger,this.bridgeIp, this.bridgeUsername);
-        this.res = res;
+        this.notifierType = notifierType;
+        this.result = result;
         }
         
         @Override
         protected Void run() throws Exception {
-            if(!isPreBuild){
-                setResultFromParam();
-                //setResultColor();
-            } else {
-                setPreBuild();
+            switch(notifierType){
+                case DescriptorImpl.notifierPreBuild:
+                    setPreBuild();
+                    break;
+                case DescriptorImpl.notifierResult:
+                    setResult();
+                    break;
             }
             return null;
         }
@@ -220,44 +219,22 @@ public class LightNotifierStep extends Step {
             }
         }
         
-        private void setResultColor() throws Exception {
-            BallColor ballcolor = getContext().get(Run.class).getResult().color;
-            
-            for(String id : this.lightId) {
-	        Light light = this.lightController.getLightForId(id);
-	
-	        switch (ballcolor) {
-	            case RED:
-	                this.lightController.setColor(light, "Bad Build", ConfigColorToHue(badBuild));
-	                break;
-	            case YELLOW:
-	                this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(unstableBuild));
-	                break;
-	            case BLUE:
-	                this.lightController.setColor(light, "Good Build", ConfigColorToHue(goodBuild));
-	                break;
-	        }
-            }
-        }
-        
-        private void setResultFromParam(){
-            logger.println("Input Param: " + res);
-            if (res != "noRes"){
-                
-                for(String id : this.lightId) {
-                    Light light = this.lightController.getLightForId(id);
+        private void setResult(){
+            logger.println("Input Param: " + result);
                     
-                    switch(res) {
-                        case "FAILURE":
-                            this.lightController.setColor(light, "Bad Build", ConfigColorToHue(badBuild));
-                            break;
-                        case "UNSTABLE":
-                            this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(unstableBuild));
-                            break;
-                        case "SUCCESS":
-                            this.lightController.setColor(light, "Good Build", ConfigColorToHue(goodBuild));
-                            break;
-                    }
+            for(String id : this.lightId) {
+                Light light = this.lightController.getLightForId(id);
+
+                switch(result) {
+                    case "FAILURE":
+                        this.lightController.setColor(light, "Bad Build", ConfigColorToHue(badBuild));
+                        break;
+                    case "UNSTABLE":
+                        this.lightController.setColor(light, "Unstable Build", ConfigColorToHue(unstableBuild));
+                        break;
+                    case "SUCCESS":
+                        this.lightController.setColor(light, "Good Build", ConfigColorToHue(goodBuild));
+                        break;
                 }
             }
         }
@@ -291,6 +268,9 @@ public class LightNotifierStep extends Step {
         public static final String defaultGoodBuild = "green";
         public static final String defaultUnstableBuild = "yellow";
         public static final String defaultBadBuild = "red";
+        public static final String notifierPreBuild = "Prebuild";
+        public static final String notifierResult = "Build Result";
+        public static final String currentResult = "${currentBuild.currentResult}";
         
         public static boolean isInteger(String s) {
             try {
@@ -324,9 +304,9 @@ public class LightNotifierStep extends Step {
         private ListBoxModel defaultList(){
             ListBoxModel items = new ListBoxModel();
             Arrays.asList(defaultPreBuild, defaultGoodBuild, defaultUnstableBuild, defaultBadBuild)
-                    .forEach((res) -> { 
-                        items.add(res);
-                    });
+                    .forEach( (i) -> {
+                        items.add(i);
+                    } );
             return items;
         }
         
@@ -345,6 +325,15 @@ public class LightNotifierStep extends Step {
         
         public ListBoxModel doFillBadBuildItems(){
             return defaultList();
+        }
+        
+        public ListBoxModel doFillNotifierTypeItems(){
+            ListBoxModel items = new ListBoxModel();
+            Arrays.asList(notifierPreBuild, notifierResult)
+                    .forEach((i) -> {
+                        items.add(i);
+                    } );
+            return items;
         }
     }
 }

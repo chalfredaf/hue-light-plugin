@@ -15,7 +15,7 @@
     <f:textbox />
   </f:entry>
   
-  <f:entry title="ID of a light" field="lightId">
+  <f:entry title="Light ID(s)" field="lightId">
     <f:textbox />
   </f:entry>
   

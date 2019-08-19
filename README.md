@@ -44,6 +44,7 @@ The following parameters are required.
 * lightId - Id of a light or a comma separeted list of id's (required)
 * notifierType  - set to 'PreBuild' for prebuild notification (only required for prebuild)
 * result  - set to ${currentBuild.currentResult} (only required for build result indication)
+
 The following colorsetting parameters are optional and uses four standard colors ('blue','green', 'yellow', 'red').
 * preBuild
 * goodBuild

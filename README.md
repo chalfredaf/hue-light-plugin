@@ -43,6 +43,14 @@ The following parameters are required.
 * lightId - Id of a light or a comma separeted list of id's (required)
 * notifierType  - set to 'PreBuild' for prebuild notification (only required for prebuild)
 * result  - set to ${currentBuild.currentResult} (only required for build result indication)
+| Parameter | value |
+|----------------|---------------------------------------------------------------------------|
+| bridgeIp       | Ip address of the hue bridge (required)
+| bridgeUsername | Authorized username of the hue bridge (required)
+| lightId        | Id of a light or a comma separeted list of id's (required)
+| notifierType   | set to 'PreBuild' for prebuild notification (only required for prebuild)
+| result         | set to ${currentBuild.currentResult} (only required for build result indication)
+
 
 The following parameters are optional and use four standard colors ('blue','green', 'yellow', 'red').
 * preBuild

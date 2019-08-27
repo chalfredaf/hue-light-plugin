@@ -31,7 +31,7 @@ in post-build action.
 ### Usage
 #### Freestyle Projects
 Normal usage with added fields for bridge IP and bridge user for individual jobs.
-If not specified the global settings will be used.
+If not specified the global settings will be used as default.
 #### Pipeline Projects
 A pipeline step can be called with the command 'huelight'.
 The pipeline command has two uses, the prebuild indication and the build
@@ -64,7 +64,7 @@ post{
 }
  ```
 
-Example with optional parameter 'preBuild'
+Example with optional parameter 'preBuild':
  ```
  huelight bridgeIp: '<IP:port>', bridgeUsername: '<username>', lightId:'<id>', notifierType:'PreBuild', preBuild: 'yellow'
  ```

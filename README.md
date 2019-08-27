@@ -44,7 +44,7 @@ The following parameters are required.
 * notifierType  - set to 'PreBuild' for prebuild notification (only required for prebuild)
 * result  - set to ${currentBuild.currentResult} (only required for build result indication)
 
-The following colorsetting parameters are optional and uses four standard colors ('blue','green', 'yellow', 'red').
+The following parameters are optional and use four standard colors ('blue','green', 'yellow', 'red').
 * preBuild
 * goodBuild
 * badBuild
@@ -62,6 +62,11 @@ post{
     huelight bridgeIp: '<IP:port>', bridgeUsername: '<username>', lightId:'<id>', result:'${currentBuild.currentResult}'
   }
 }
+ ```
+
+Example with optional parameter 'preBuild'
+ ```
+ huelight bridgeIp: '<IP:port>', bridgeUsername: '<username>', lightId:'<id>', notifierType:'PreBuild', preBuild: 'yellow'
  ```
 
 ## License

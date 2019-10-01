@@ -24,8 +24,6 @@
 package org.jenkinsci.plugins.hue_light;
 
 import hudson.Extension;
-import hudson.model.BallColor;
-import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ListBoxModel;
 import java.io.PrintStream;
